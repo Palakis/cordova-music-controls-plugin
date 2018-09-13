@@ -124,11 +124,15 @@ public class MusicControlsBroadcastReceiver extends BroadcastReceiver {
 					}
 					this.cb = null;
 				}
-			} else if (message.equals("music-controls-destroy")){
+			} else if (message.equals(MusicControls.prefix(this.musicControls.getIntentPrefix(), "music-controls-destroy"))) {
 				// Close Button
 				this.cb.success("{\"message\": \"music-controls-destroy\"}");
 				this.cb = null;
 				this.musicControls.destroyPlayerNotification();
+			} else if (message.startsWith(this.musicControls.getIntentPrefix())) {
+				String unprefixedMessage = message.replace(this.musicControls.getIntentPrefix(), "");
+				this.cb.success("{\"message\": \"" + unprefixedMessage + "\"}");
+				this.cb = null;
 			} else {
 				this.cb.success("{\"message\": \"" + message + "\"}");
 				this.cb = null;
