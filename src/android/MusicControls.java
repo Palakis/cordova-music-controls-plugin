@@ -47,11 +47,9 @@ public class MusicControls extends CordovaPlugin {
 	private AudioManager mAudioManager;
 	private PendingIntent mediaButtonPendingIntent;
 	private boolean mediaButtonAccess=true;
-
   	private Activity cordovaActivity;
-
 	private MediaSessionCallback mMediaSessionCallback = new MediaSessionCallback();
-
+	private String intentPrefix;
 
 	private void registerBroadcaster(MusicControlsBroadcastReceiver mMessageReceiver){
 		final Context context = this.cordova.getActivity().getApplicationContext();
@@ -94,8 +92,9 @@ public class MusicControls extends CordovaPlugin {
 		final Context context=activity.getApplicationContext();
 
     		this.cordovaActivity = activity;
-
-		this.notification = new MusicControlsNotification(activity,this.notificationID);
+		this.intentPrefix = (this.cordova.getContext().getPackageName() + ".");
+		
+		this.notification = new MusicControlsNotification(activity, this.notificationID, this.intentPrefix);
 		this.mMessageReceiver = new MusicControlsBroadcastReceiver(this);
 		this.registerBroadcaster(mMessageReceiver);
 
@@ -221,6 +220,18 @@ public class MusicControls extends CordovaPlugin {
 		onDestroy();
 		super.onReset();
 	}
+	
+	public String getIntentPrefix() {
+		return this.intentPrefix;
+  	}
+
+	public static String prefix(String prefix, String suffix) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(prefix);
+		builder.append(suffix);
+		return builder.toString();
+  	}
+	
 	private void setMediaPlaybackState(int state) {
 		PlaybackStateCompat.Builder playbackstateBuilder = new PlaybackStateCompat.Builder();
 		if( state == PlaybackStateCompat.STATE_PLAYING ) {
